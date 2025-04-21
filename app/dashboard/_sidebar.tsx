@@ -1,6 +1,9 @@
 "use client";
 
 import { useState, useRef } from "react";
+import Item from "./sidebar-item";
+import {ChevronsUpDown, Plus, PlusCircle, Search, Settings, Trash } from "lucide-react";
+import Profile from "@/components/ui/profile-icon";
 
 const Sidebar = () => {
   const [width, setWidth] = useState(300); 
@@ -29,8 +32,19 @@ const Sidebar = () => {
       style={{ width: `${width}px` }}
       className="h-full group bg-gray-200 text-black flex flex-col p-4 relative"
     >
-      
-      Sidebar
+     
+      <Item text={"Sumit"} icon1={<Profile letter="S"/>} variantType="primary" icon2={<ChevronsUpDown/>} />
+
+      <Item text={"Search"} icon1={<Search/>} variantType="secondary" />
+     
+      <Item text={"Setting"} icon1={<Settings/>} variantType="secondary" />
+     
+      <Item text={"New page"} icon1={<PlusCircle/>} variantType="secondary" />
+     
+      <Item text={"Add a page"} icon1={<Plus/>} variantType="secondary" />
+     
+      <Item text={"Trash"} icon1={<Trash/>} variantType="secondary" />
+    
 
       <div
         onMouseDown={startResize}
