@@ -4,6 +4,11 @@
 @custom-variant dark (&:i
 s(.dark *));
 
+html,body{
+  height: 100%;
+  width: 100%;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -120,4 +125,13 @@ s(.dark *));
   body {
     @apply bg-background text-foreground;
   }
+}
+
+::-webkit-scrollbar {
+  display: none; /* Hides scrollbar in webkit browsers */
+}
+
+.scrollbar-none {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;      /* Firefox */
 }
