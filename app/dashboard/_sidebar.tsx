@@ -1,13 +1,18 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
 import Item from "./sidebar-item";
 import {ChevronsUpDown, Plus, PlusCircle, Search, Settings, Trash } from "lucide-react";
 import Profile from "@/components/ui/profile-icon";
+import PagesComponent from "./All-pages";
+import { PageContext } from "@/providers/PageProvider";
 
 const Sidebar = () => {
   const [width, setWidth] = useState(300); 
   const isResizing = useRef(false);
+  const {Pages,setPages} = useContext(PageContext);
+  const [selectedId, setSelectedId] = useState("");
+
 
   const startResize = () => {
     isResizing.current = true;
@@ -27,6 +32,41 @@ const Sidebar = () => {
     document.removeEventListener("mouseup", stopResize);
   };
 
+
+  const handlePages = () => {
+    const value = prompt("Enter file name:");
+    if (!value) return;
+  
+    const addPageById = (pages: any[]): any[] => {
+      return pages.map((page) => {
+        if (page.id === selectedId) {
+          return {
+            ...page,
+            children: [
+              ...(page.children || []),
+              {
+                pageName: value,
+                id: Math.random().toString(),
+                closed: true,
+                children: []
+              }
+            ]
+          };
+        } else if (page.children && page.children.length > 0) {
+          return {
+            ...page,
+            children: addPageById(page.children)
+          };
+        }
+        return page;
+      });
+    };
+  
+    setPages((prev: any) => addPageById(prev));
+  };
+  
+  
+
   return (
     <div
       style={{ width: `${width}px` }}
@@ -39,7 +79,9 @@ const Sidebar = () => {
      
       <Item text={"Setting"} icon1={<Settings/>} variantType="secondary" />
      
-      <Item text={"New page"} icon1={<PlusCircle/>} variantType="secondary" />
+      <Item onClick={handlePages} text={"New page"} icon1={<PlusCircle/>} variantType="secondary"/>
+
+      <PagesComponent selectedId={selectedId} setSelectedId={setSelectedId}/>
      
       <Item text={"Add a page"} icon1={<Plus/>} variantType="secondary" />
      
