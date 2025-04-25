@@ -1,7 +1,7 @@
 import { PageContext } from "@/providers/PageProvider";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Item from "./sidebar-item";
-import { ChevronDown, ChevronRight, File } from "lucide-react";
+import { ChevronDown, ChevronRight, Ellipsis, File } from "lucide-react";
 import { Page } from "@/types/pages";
 
 // This will be called for parent page and it will recursively render all the children
@@ -16,8 +16,11 @@ const PageItem = ({
   selectedId: string; 
   setSelectedId: (id: string) => void; 
 }) => {
+
+  
   const context = useContext(PageContext);
   const { setPages } = context!;
+  const [clicked,setClicked] = useState(false);
 
   const togglePageState = (id: string, close: boolean, pages: Page[]): Page[] => {
     return pages.map((p) => {
@@ -45,6 +48,9 @@ const PageItem = ({
     }
   };
 
+  useEffect(()=>{
+    console.log(page.id , clicked)
+  },[clicked])
   // Check if this page is the selected one
   const isSelected = selectedId === page.id;
 
@@ -52,30 +58,46 @@ const PageItem = ({
     <div>
       {/* Parent page item */}
       <div 
-        className="flex items-center "
-        style={{ paddingLeft: `${level * 16}px` }}
-      >
-        {page.children && page.children.length > 0 ? (
-          <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center">
-            {page.closed ? (
-              <ChevronRight className="cursor-pointer" onClick={handleToggle} />
-            ) : (
-              <ChevronDown className="cursor-pointer" onClick={handleToggle} />
-            )}
-          </div>
-        ) : (
-          <div className="flex-shrink-0 w-5 h-5"></div> // Empty placeholder for alignment
-        )}
+          className="flex items-center  " 
+          style={{ paddingLeft: `${level * 16}px` }}
+        >
+          {page.children && page.children.length > 0 ? (
+            <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center">
+              {page.closed ? (
+                <ChevronRight className="cursor-pointer" onClick={handleToggle} />
+              ) : (
+                <ChevronDown className="cursor-pointer" onClick={handleToggle} />
+              )}
+            </div>
+          ) : (
+            <div className="flex-shrink-0 w-5 h-5"></div>
+          )}
 
-        <div className="flex-grow">
-          <Item
-            icon1={<File />}
-            text={page.pageName}
-            // variantType="secondary"
-            className={`${isSelected ? "text-black " : "text-gray-500 "} font-semibold w-fit  text-lg hover:cursor-pointer`}
-            onClick={handleToggle}
-          />
-        </div>
+            <div className="flex-grow">
+              <Item
+                icon1={<File />}
+                text={page.pageName}
+                className={`${isSelected ? "text-black " : "text-gray-500 "} font-semibold w-fit text-lg hover:cursor-pointer`}
+                onClick={handleToggle}
+              />
+            </div>
+
+            <div className="relative group border border-black">
+                <div className="hover:cursor-pointer">
+                  <Ellipsis 
+                    onClick={() => setClicked((prev) => !prev)} 
+                    className="hidden group-hover:block" 
+                  />
+                </div>
+                {clicked && 
+                  <div className="flex flex-col bg-black text-white p-3 rounded-md absolute right-0 top-6 shadow-lg z-10 w-32">
+                    <div className="border-b border-gray-500 pb-2 mb-2 cursor-pointer hover:bg-gray-800 px-2">Rename</div>
+                    <div className="cursor-pointer hover:bg-gray-800 px-2">Delete</div> 
+                  </div>
+                }
+            </div>
+
+
       </div>
 
       {/* Recursively render children */}
@@ -103,7 +125,7 @@ const PagesComponent = ({selectedId , setSelectedId}) => {
   const { Pages } = context;
 
   return (
-    <div className="sidebar-pages mt-2">
+    <div className="sidebar-pages mt-2 mb-5">
       {Pages.map((page) => (
         <PageItem 
           key={page.id} 

@@ -14,30 +14,30 @@ const samplePages: Page[] = [
   {
     id: "1",
     pageName: "Project Alpha",
-    closed: false,
+    closed: true,
     children: [
       {
         id: "1-1",
         pageName: "README.md",
         children: [],
-        closed: false
+        closed: true
       },
       {
         id: "1-2",
         pageName: "src",
-        closed: false,
+        closed: true,
         children: [
           {
             id: "1-2-1",
             pageName: "index.tsx",
             children: [],
-            closed: false
+            closed: true
           },
           {
             id: "1-2-2",
             pageName: "App.tsx",
             children: [],
-            closed: false
+            closed: true
           }
         ]
       }
@@ -46,12 +46,12 @@ const samplePages: Page[] = [
   {
     id: "2",
     pageName: "Notes",
-    closed: false,
+    closed: true,
     children: [
       {
         id: "2-1",
         pageName: "Daily Logs",
-        closed: false,
+        closed: true,
         children: [
           {
             id: "2-1-1",

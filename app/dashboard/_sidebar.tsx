@@ -64,6 +64,17 @@ const Sidebar = () => {
   
     setPages((prev: any) => addPageById(prev));
   };
+
+
+  const handleFolderAdd = ()=>{
+    let value = prompt("Enter folder name: ");
+    setPages((prev:any)=>[...prev,{
+      pageName: value,
+      children: [],
+      id : Math.random().toString(),
+      closed: false
+    }])
+  }
   
   
 
@@ -75,15 +86,18 @@ const Sidebar = () => {
      
       <Item text={"Sumit"} icon1={<Profile letter="S"/>} variantType="primary" icon2={<ChevronsUpDown/>} />
 
-      <Item text={"Search"} icon1={<Search/>} variantType="secondary" />
+      <div className="text-gray-500 hover:text-black flex items-center ">
+        <Item icon1={<Search/>}  variantType="secondary" />
+        <input type="text" placeholder="Search" className="text-black text-lg px-2 py-3" />
+      </div>
      
-      <Item text={"Setting"} icon1={<Settings/>} variantType="secondary" />
+      <Item text={"Settings"} icon1={<Settings/>} variantType="secondary" />
      
       <Item onClick={handlePages} text={"New page"} icon1={<PlusCircle/>} variantType="secondary"/>
 
       <PagesComponent selectedId={selectedId} setSelectedId={setSelectedId}/>
      
-      <Item text={"Add a page"} icon1={<Plus/>} variantType="secondary" />
+      <Item onClick={handleFolderAdd} text={"Add a folder"} icon1={<Plus/>} variantType="secondary" />
      
       <Item text={"Trash"} icon1={<Trash/>} variantType="secondary" />
     
