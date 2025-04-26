@@ -90,3 +90,76 @@ When adding a page, it only got added to the first-level parent (top-level page)
 
 This process involved breaking problems down, understanding React's state flow, and applying known principles like recursion and immutability to solve them in a logical, layered way.
 
+----------------------------------------------------------------------------------------------------------------------
+ 
+Problem with handleDelete Function Execution
+Jab tu "Delete" button click karta hai, handleDelete function execute hota hai.
+
+handleDelete function ka kaam hai, selected page (is case mein "Daily Logs" page) ko remove karna, aur uske children ko bhi recursively delete karna.
+
+tsx
+Copy code
+const handleDelete = () => {
+  // Call the deletePageRecursive function with the pages and the pageId of the page to be deleted
+  deletePageRecursive(Pages, page.id); 
+}
+deletePageRecursive(Pages, page.id)
+Yahaan pe Pages wo array hai jo current pages ko represent karta hai (initially jo samplePages hai).
+
+page.id vo ID hai jise tu delete karna chahta hai. Jab tu "Daily Logs" pe click karta hai, to page.id "2-1" hoga.
+
+So, deletePageRecursive ko Pages (all pages) aur page.id = "2-1" (Daily Logs) pass hote hain.
+
+2. Inside deletePageRecursive Function
+tsx
+Copy code
+const deletePageRecursive = (pages: Page[], pageIdToDelete: string): Page[] => {
+  return pages
+    .filter((page) => page.id !== pageIdToDelete)  // Remove the page with the ID to delete
+    .map((page) => {
+      // If page has children, recursively delete from children too
+      if (page.children && page.children.length > 0) {
+        return { ...page, children: deletePageRecursive(page.children, pageIdToDelete) };
+      }
+      return page;  // If no children, return the page as is
+    });
+};
+pages.filter(): Is step mein, hum pages ko filter karte hain taaki us page ko remove kar sakein jiska ID delete karna hai (yani "2-1").
+
+Filter Process: Har page ka id check hota hai. Agar page ka id match nahi karta (i.e., "2-1"), to wo page resultant array mein add hota hai.
+
+Agar page ka id match karta hai, to wo page remove kar diya jata hai.
+
+map(): Agar page ke paas children hain (yani nested pages hain), to hum recursively delete karne ke liye deletePageRecursive function ko children pe call karte hain.
+
+Agar page ke paas children nahi hain, to wo page waise ka waise hi return ho jata hai.
+
+3. Flow with Pages:
+Let's dry run the flow:
+
+handleDelete call: Jab tu "Daily Logs" page pe click karta hai, handleDelete function run hota hai.
+
+Initial call to deletePageRecursive(Pages, "2-1") (where Pages is the list of all pages and "2-1" is the page to delete).
+
+Filtering Pages: The first step inside deletePageRecursive is to filter out the page with id === "2-1".
+
+For Project Alpha page (id = "1"), it doesn't match "2-1", so it is included in the new filtered array.
+
+For Notes page (id = "2"), it doesn't match "2-1", so it is also included in the new filtered array.
+
+Checking for Children:
+
+When filtering the pages, after the filtering process, we go into mapping each page.
+
+For Notes (id = "2"):
+
+It has children, so we go into its children.
+
+Inside children: The child with id = "2-1" is removed because it matches the id to delete ("2-1").
+
+The remaining pages after filtering out "2-1":
+
+js
+Copy code
+[{ id: "2-1-1", pageName: "2024-04-21.md", children: [], closed: true }, { id: "2-1-2", pageName: "2024-04-22.md", children: [], closed: true }]
+So "Daily Logs" and its children are deleted.
