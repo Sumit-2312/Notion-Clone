@@ -130,7 +130,7 @@ const PageItem = ({
                 />
               ) : (
                 <Item
-                  icon1={<File />}
+                  icon1={<File className="size-6 shrink-0" />}
                   text={page.pageName}
                   className={`${isSelected ? "text-black " : "text-gray-500 "} font-semibold w-fit text-lg hover:cursor-pointer`}
                   onClick={handleToggle}

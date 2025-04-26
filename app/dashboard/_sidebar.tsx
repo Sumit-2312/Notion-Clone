@@ -10,7 +10,7 @@ import { PageContext } from "@/providers/PageProvider";
 const Sidebar = () => {
   const [width, setWidth] = useState(300); 
   const isResizing = useRef(false);
-  const {Pages,setPages} = useContext(PageContext);
+  const {setPages} = useContext(PageContext);
   const [selectedId, setSelectedId] = useState("");
 
 
@@ -81,7 +81,7 @@ const Sidebar = () => {
   return (
     <div
       style={{ width: `${width}px` }}
-      className="h-full group bg-gray-200 text-black flex flex-col p-4 relative"
+      className="h-full group bg-gray-200 text-black flex flex-col p-4 relative overflow-x-hidden overflow-y-scroll"
     >
      
       <Item text={"Sumit"} icon1={<Profile letter="S"/>} variantType="primary" icon2={<ChevronsUpDown/>} />
