@@ -1,13 +1,8 @@
+import { IBlock, IFile, IFolder, IProject, IUser } from '@/types/database';
 import mongoose from 'mongoose';
 const { Schema, model } = mongoose;
 
 // ------------------------------
-export interface IUser {
-  userName: string;
-  userId: number;
-  email: string;
-  password: string;
-}
 
 const userSchema = new Schema<IUser>({
   userName: {
@@ -31,13 +26,6 @@ const userSchema = new Schema<IUser>({
 });
 
 // ------------------------------
-export interface IProject {
-  name: string;
-  userId: number;
-  projectId: number;
-  createdAt: Date;
-  updatedAt: Date;
-}
 
 const projectSchema = new Schema<IProject>({
   name: { type: String, required: true },
@@ -48,14 +36,7 @@ const projectSchema = new Schema<IProject>({
 });
 
 // ------------------------------
-export interface IFolder {
-  name: string;
-  folderId: number;
-  projectId: number;
-  parentId: number;
-  createdAt: Date;
-  updatedAt: Date;
-}
+
 
 const folderSchema = new Schema<IFolder>({
   name: { type: String, required: true },
@@ -67,13 +48,7 @@ const folderSchema = new Schema<IFolder>({
 });
 
 // ------------------------------
-export interface IFile {
-  name: string;
-  fileId: number;
-  folderId: number;
-  createdAt: Date;
-  updatedAt: Date;
-}
+
 
 const fileSchema = new Schema<IFile>({
   name: { type: String, required: true },
@@ -84,13 +59,7 @@ const fileSchema = new Schema<IFile>({
 });
 
 // ------------------------------
-export type BlockType = "H1" | "H2" | "H3" | "text" | "image" | "icon";
 
-export interface IBlock {
-  type: BlockType;
-  fileId: number;
-  content: string;
-}
 
 const blockSchema = new Schema<IBlock>({
   type: { type: String, enum: ["H1", "H2", "H3", "text", "image", "icon"] },
