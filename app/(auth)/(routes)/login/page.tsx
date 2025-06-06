@@ -43,12 +43,12 @@ const LoginPage = () => {
     if (res?.error) {
       setLoginError("Invalid email or password");
     } else if (res?.ok) {
-      window.location.href = "/dashboard";
+      window.location.href = "/";
     }
   };
 
   const handleSocialLogin = (provider: string) => {
-    signIn(provider, { callbackUrl: "/dashboard" });
+    signIn(provider, { callbackUrl: "/" });
   };
 
   return (

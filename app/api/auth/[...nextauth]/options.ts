@@ -6,6 +6,7 @@ import type { NextAuthOptions } from "next-auth";
 import type { User as NextAuthUser, Session } from "next-auth";
 import type { JWT } from "next-auth/jwt";
 import bcrypt from 'bcrypt';
+import connect from "@/lib/dbConnect";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -21,6 +22,11 @@ export const authOptions: NextAuthOptions = {
             if (!email){
               throw new Error("Email is mandatory");
             };
+
+            const connection = await connect();
+            if(!connection) {
+              throw new Error("Database connection error");
+            }
 
             const user = await users.findOne({ email });
             if (!user){
@@ -39,9 +45,16 @@ export const authOptions: NextAuthOptions = {
               email: user.email,
             } as NextAuthUser;
         }
-        catch(error){
-          throw new Error("Unexpected error occured during authorization");
+        catch (error) {
+          // if error is already an Error object, use its message
+          if (error instanceof Error) {
+            throw new Error(error.message);
+          } else {
+            // fallback: convert to string
+            throw new Error(String(error));
+          }
         }
+
       },
     }),
     GithubProvider({
