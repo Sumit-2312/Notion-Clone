@@ -2,7 +2,7 @@ import { PageContext } from "@/providers/PageProvider";
 import { useContext, useEffect, useState } from "react";
 import Item from "./sidebar-item";
 import { ChevronDown, ChevronRight, Ellipsis, File } from "lucide-react";
-import { Page } from "@/types/pages";
+import { Page } from "@/types/projectsSchema";
 import { rename } from "fs";
 
 // This will be called for parent page and it will recursively render all the children
