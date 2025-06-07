@@ -1,5 +1,6 @@
 "use client";
 
+import NewProjectModal from "@/components/ui/newProjectModal";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -18,6 +19,8 @@ const Projects: React.FC = () => {
   // it give the session asyncronously so we put session inside useEffect bcz at first instance it can be
   // undefined so whenever it is filled in session we send the request to fetch the projects
   const router = useRouter();
+  const [clicked,setClicked] = useState(false);
+
 
   async function fetchProjects(userId: string) {
     try {
@@ -66,6 +69,24 @@ const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
           </div>
         ))
       )}
+       <div onClick={(e)=>{
+        e.stopPropagation();  // Prevent the bubbling up 
+        setClicked(true)
+      }}
+        className="group min-w-60 w-64 h-64 flex flex-col justify-center items-center rounded-2xl border-2 border-dashed border-gray-600 text-gray-400 cursor-pointer transition duration-300 hover:border-blue-500 hover:shadow-blue-500/50 hover:shadow-lg"
+      >
+          <div
+            className="flex justify-center items-center w-12 h-12 rounded-full border border-gray-600 group-hover:border-blue-500 transition duration-300"
+          >
+            <span className="text-3xl">+</span>
+          </div>
+          <p className="mt-4 text-lg font-semibold group-hover:text-blue-400 transition duration-300">
+            Create New Project
+          </p>
+        </div>
+
+      {clicked && <NewProjectModal setclicked={setClicked} />}
+
     </div>
   );
 };
