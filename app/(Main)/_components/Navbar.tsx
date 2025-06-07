@@ -12,7 +12,7 @@ const Navbar = () => {
     const {data:session} = useSession();
 
     return ( 
-        <div  className={`flex fixed top-0 left-0 hover:cursor-pointer w-full items-center justify-between p-4 ${scrolling ? "border-b-1 border-gray-600" : " "}`}>
+        <div  className={`flex fixed top-0 left-0 z-50 hover:cursor-pointer w-full items-center justify-between p-4 ${scrolling ? "border-b-1 border-gray-600" : " "}`}>
 
             <div onClick={()=> router.push("/")} className="flex items-center gap-2"> 
             <svg

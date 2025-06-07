@@ -1,5 +1,6 @@
 "use client";
 
+import axios from "axios";
 import { useState } from "react";
 
 const SignupPage = () => {
@@ -10,42 +11,63 @@ const SignupPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
 
-  const validate = () => {
-    const newErrors: { [key: string]: string } = {};
-    if (!username.trim()) newErrors.username = "Username is required";
-    if (!email.trim()) newErrors.email = "Email is required";
-    else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(email.trim()))
-      newErrors.email = "Email is invalid";
-    if (!password) newErrors.password = "Password is required";
-    else if (password.length < 6)
-      newErrors.password = "Password must be at least 6 characters";
-    return newErrors;
-  };
 
-  const handleSubmit = async () => {
-    // const validationErrors = validate();
-    // if (Object.keys(validationErrors).length > 0) {
-    //   setErrors(validationErrors);
-    //   return;
-    // }
 
-    setIsSubmitting(true);
-    setSuccessMsg("");
-    setErrors({});
+const handleSubmit = async () => {
+  setIsSubmitting(true);
+  setSuccessMsg("");
+  setErrors({});
+  console.log("username" , username);
+  console.log("password" , password);
+  console.log("email" , email);
 
-    try {
-      // Simulate signup API call
-      await new Promise((r) => setTimeout(r, 1500));
-      setSuccessMsg("Account created successfully!");
-      setUsername("");
-      setEmail("");
-      setPassword("");
-    } catch (error) {
-      setErrors({ general: "Something went wrong. Please try again." });
-    } finally {
-      setIsSubmitting(false);
+  try {
+    const response = await axios.post("http://localhost:3000/api/register", {
+      userName: username,
+      password,
+      email,
+    });
+
+    console.log(response.data);
+
+    // If no error, set success
+    setSuccessMsg("Account created successfully!");
+    setUsername("");
+    setEmail("");
+    setPassword("");
+  } catch (error: any) {
+    // Axios attaches error.response when the server sends error responses
+    if (error.response) {
+      const { status, data } = error.response;
+
+      if (status === 400 && data.details) {
+        const fieldErrors = data.details.fieldErrors;
+        const newErrors: { [key: string]: string } = {};
+
+        Object.keys(fieldErrors).forEach((field) => {
+          newErrors[field] = `${fieldErrors[field]}`;
+        });
+
+        console.log("newError: ",newErrors);
+        setErrors(newErrors);
+      } else {
+        // General error (e.g., status 400 or 500)
+        setErrors({
+          general: data.error || "Something went wrong. Please try again.",
+        });
+        console.log(errors);
+      }
+    } else {
+      // Network error or something else
+      setErrors({
+        general: "Something went wrong. Please try again.",
+      });
     }
-  };
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-gradient-to-tr from-indigo-500 via-purple-600 to-pink-500 flex flex-col justify-center py-12 px-6 sm:px-0">
@@ -82,18 +104,18 @@ const SignupPage = () => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className={`mt-1 block w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${
-                errors.username ? "border-red-500" : "border-gray-300"
+                errors.userName ? "border-red-500" : "border-gray-300"
               }`}
-              aria-invalid={!!errors.username}
+              aria-invalid={!!errors.userNqme}
               aria-describedby="username-error"
             />
-            {errors.username && (
+            {errors.userName && (
               <p
                 className="mt-1 text-sm text-red-600"
                 id="username-error"
                 role="alert"
               >
-                {errors.username}
+                {errors.userName}
               </p>
             )}
           </div>

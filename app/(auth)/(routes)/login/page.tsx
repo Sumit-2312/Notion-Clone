@@ -10,28 +10,16 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState("");
 
-  const validate = () => {
-    const newErrors: { [key: string]: string } = {};
-    if (!email.trim()) newErrors.email = "Email is required";
-    else if (
-      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(email.trim())
-    )
-      newErrors.email = "Email is invalid";
-    if (!password) newErrors.password = "Password is required";
-    return newErrors;
-  };
+
 
   const handleLogin = async () => {
-    const validationErrors = validate();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
+
 
     setErrors({});
     setIsLoading(true);
     setLoginError("");
-
+// singIn do not throw the error so we don't have any need to pack it inside try catch block 
+// it simply return ans object having {status,error,ok}
     const res = await signIn("credentials", {
       redirect: false,
       email,
@@ -41,7 +29,7 @@ const LoginPage = () => {
     setIsLoading(false);
 
     if (res?.error) {
-      setLoginError("Invalid email or password");
+      setLoginError(res.error);
     } else if (res?.ok) {
       window.location.href = "/";
     }

@@ -1,12 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import Navbar from "./_components/Navbar";
+import Projects from "./_components/project";
 
 export default function Home() {
   return (
   <div className="h-full bg-black w-full flex flex-col items-center text-white pt-40">
     <Navbar/>
-    <div className=" flex flex-col  h-[70vh] px-20">
+    <div className=" flex flex-col px-20">
 
       <div className="flex  h-full text-center flex-col items-center justify-center ">
 
@@ -35,10 +36,12 @@ export default function Home() {
 
     
         <div id="Projects" className="flex flex-col mt-10 justify-center p-20 items-center w-full min-h-screen bg-black">
-            <p className="text-4xl font-bold" >Start building your projects</p>   
-            <div className="flex justify-center items-center h-fit p-20 w-full">
+            <p className="text-4xl text-center font-bold" >Start building your projects</p>   
+
+            <div className="flex flex-wrap justify-center items-center gap-10 h-fit p-20 w-full">
+              <Projects/>
                 <div
-                  className="group w-64 h-64 flex flex-col justify-center items-center rounded-2xl border-2 border-dashed border-gray-600 text-gray-400 cursor-pointer transition duration-300 hover:border-blue-500 hover:shadow-blue-500/50 hover:shadow-lg"
+                  className="group min-w-60 w-64 h-64 flex flex-col justify-center items-center rounded-2xl border-2 border-dashed border-gray-600 text-gray-400 cursor-pointer transition duration-300 hover:border-blue-500 hover:shadow-blue-500/50 hover:shadow-lg"
                 >
                     <div
                       className="flex justify-center items-center w-12 h-12 rounded-full border border-gray-600 group-hover:border-blue-500 transition duration-300"
@@ -51,7 +54,6 @@ export default function Home() {
                  </div>
             </div>
         </div>
-
     
   </div>
   );
