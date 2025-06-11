@@ -2,6 +2,7 @@ import { folders, projects, files, blocks } from "@/models/databaseSchema/db";
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth"; // or your auth library import
 import { authOptions } from "../../auth/[...nextauth]/options";
+import connect from "@/lib/dbConnect";
 
 export async function GET(request: NextRequest,{params}:{params:{projectId:string}}) {
     //@ts-ignore
@@ -30,6 +31,7 @@ export async function GET(request: NextRequest,{params}:{params:{projectId:strin
     // Find the project
     const project = await projects.findOne({ projectId: Number(projectId) });
     if (!project) {
+      
       return NextResponse.json({ message: "No such project exists" }, { status: 404 });
     }
 

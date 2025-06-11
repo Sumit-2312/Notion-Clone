@@ -9,6 +9,12 @@ html,body{
   width: 100%;
 }
 
+/* Prevent text selection during resizing */
+.no-select {
+  user-select: none;
+}
+
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

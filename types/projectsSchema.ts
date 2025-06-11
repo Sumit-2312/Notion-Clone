@@ -1,20 +1,22 @@
 export interface ProjectType {
+  closed: string;
   projectId: string;
   projectName: string;
   userId: string;
   createdAt: string;
   updatedAt: string;
-  folders: { [folderName: string]: FolderType };
+  folders: FolderType[];
 }
 
 export interface FolderType {
+  closed: string;
   folderName: string;
   folderId: string;
   projectId: string;
   createdAt: string;
   updatedAt: string;
   parentId: string;
-  files: { [fileName: string]: FileType };
+  files: FileType[];
 }
 
 export interface FileType {
@@ -23,11 +25,11 @@ export interface FileType {
   folderId: string;
   createdAt: string;
   updatedAt: string;
-  blocks: { [blockName: string]: BlockType };
+  blocks: BlockType[];
 }
 
 export interface BlockType {
-  blockName: string;
+  blockType: string;
   type: string;
   fileId: string;
   blockId: string;

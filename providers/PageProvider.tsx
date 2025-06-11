@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useState } from "react";
-import { project as ProjectType } from "../types/projectsSchema";
+import { ProjectType as ProjectType } from "../types/projectsSchema";
 
 interface ProjectContextType {
   projects: { [projectName: string]: ProjectType };

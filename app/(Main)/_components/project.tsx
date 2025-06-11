@@ -33,6 +33,7 @@ async function fetchProjects(userId: string) {
       fetchedProjects.forEach((project) => {
         if (!newProjects[project.name]) {
           newProjects[project.name] = {
+            closed: true,
             projectId: project.projectId,
             projectName: project.name,
             userId: project.userId,

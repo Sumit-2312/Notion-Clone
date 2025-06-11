@@ -1,104 +1,62 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button";
-import { Plus, Trash2, RefreshCcw } from "lucide-react";
-import { useRef, useState } from "react";
+import { ProjectContext } from "@/providers/PageProvider";
+import { FolderType, ProjectType } from "@/types/projectsSchema";
+import axios from "axios";
+import { useContext, useEffect, useState } from "react";
+import Sidebar from "./components/sidebar";
 
-const Workspace = ({ params }: { params: { userId: string } }) => {
+export default function Dashboard({params}:{params:{userId:string,projectId:string}}){
 
-    const { userId } = params;
-    const [imageSrc, setImageSrc] = useState<string | null>(null);
-    const fileInputRef = useRef<HTMLInputElement>(null);
+    const {userId,projectId} = params;
+    const [Errors,setErrors] = useState<string|null>(null);
+    const context = useContext(ProjectContext);
+    const [project,setProject] = useState<ProjectType|null>();
+    
+    if( !context ){
+        setErrors("something went wrong");
+        return <div>Error: Context not available</div>;
+    }
+    
+    const {setProjects} = context;
 
-    const handleDivClick = () => {
-        if (!imageSrc) {
-            fileInputRef.current?.click(); // open file picker only if no image
+    const FetchFolders = async ()=>{
+        try{
+            const response = await axios.get(`http://localhost:3000/api/project/${projectId}`);
+            const AllFolders: FolderType[] = response.data.folders;
+            const project: ProjectType = response.data.project;
+
+            setProjects((prev: { [projectName: string]: ProjectType }) => {
+
+                const updatedProject: ProjectType = {
+                    ...project,
+                    folders: AllFolders
+                };
+
+                setProject(updatedProject);
+                
+                return {
+                    ...prev,
+                    [project.projectName]: updatedProject
+                };
+            });
         }
-    };
-
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImageSrc(reader.result as string);
-            };
-            reader.readAsDataURL(file);
+        catch(error:any){
+            setErrors(error?.message || "An error occurred");
         }
-    };
+    }
 
-    const handleDeleteImage = () => {
-        setImageSrc(null);
-    };
+    useEffect(()=>{
+        FetchFolders();
+    },[projectId,project]); 
 
-    const handleChangeImage = () => {
-        fileInputRef.current?.click(); // trigger file picker again
-    };
+    if (Errors) {
+        return <div className="text-red-500 text-xl">Error: {Errors}</div>;
+    }
 
-    return ( 
-        <div className="text-white h-[200vh] w-full flex flex-col relative pt-20">
-
-            <div className="navbar flex gap-5 items-center justify-end pt-3 px-3 fixed top-0 right-0 z-10">
-                <Button className="text-black hover:cursor-pointer hover:bg-gray-600 hover:text-white font-bold bg-white">
-                    Publish
-                </Button>
-                <Button className="text-black hover:cursor-pointer hover:bg-gray-600 hover:text-white font-bold bg-white">
-                    Log out
-                </Button>
-            </div>
-
-            <div 
-                className="h-72 w-full group relative hover:border border-t-gray-500 hover:bg-gradient-to-tr hover:cursor-pointer from-gray-800 to-gray-900 border-b-gray-500 overflow-hidden"
-                onClick={handleDivClick}
-            >
-                {imageSrc ? (
-                    <>
-                        <img
-                            src={imageSrc}
-                            alt="Uploaded"
-                            className="w-full h-full object-cover"
-                        />
-                        {/* Buttons on hover */}
-                        <div className="absolute inset-0 bg-opacity-30 hidden group-hover:flex items-center justify-center gap-4">
-                            <Button 
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleChangeImage();
-                                }}
-                                className="bg-white text-black hover:bg-gray-700 hover:text-white"
-                            >
-                                <RefreshCcw className="mr-2" size={16}/> Change
-                            </Button>
-                            <Button 
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDeleteImage();
-                                }}
-                                variant="destructive"
-                            >
-                                <Trash2 className="mr-2" size={16}/> Delete
-                            </Button>
-                        </div>
-                    </>
-                ) : (
-                    <div className="hidden group-hover:flex flex-col items-center justify-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                        <Plus className="size-10" />
-                        <p className="text-gray-300 text-sm">Click anywhere to add image</p>
-                    </div>
-                )}
-
-                {/* Hidden input */}
-                <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                />
-            </div>
-
+    return (
+        <div className="text-white text-4xl border border-amber-300 w-full flex h-screen">
+            <Sidebar project={project}/>
         </div>
-    );
+    )
 }
- 
-export default Workspace;
