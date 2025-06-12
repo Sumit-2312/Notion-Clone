@@ -1,5 +1,5 @@
 import React from "react";
-import { LucideIcon } from "lucide-react";
+import { ChevronDown, ChevronUp, LucideIcon } from "lucide-react";
 
 interface SidebarItemProps {
   First?: LucideIcon;
@@ -7,6 +7,8 @@ interface SidebarItemProps {
   Third?: LucideIcon;
   text: string;
   classname?: string; 
+  closed?: boolean;
+  onToggle?: () => void; // New
 }
 
 const SidebarItem: React.FC<SidebarItemProps> = ({
@@ -14,14 +16,32 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   Second,
   Third,
   text,
-  classname = "",
+  classname,
+  closed,
+  onToggle
 }) => {
   return (
-    <div className={`relative flex items-center text-white gap-2 p-2 ${classname}`}>
-      {First && <First size={20} />}
-      {Second && <Second size={20} />}
-      {Third && <Third size={20} />}
-      <span className="text-base">{text}</span>
+    <div className={`hover:cursor-pointer flex items-center justify-between gap-2 py-2 pr-2 text-white ${classname}`}>
+      {/* LEFT SECTION - now clickable */}
+      <div
+        className="flex items-center gap-1 min-w-0 flex-1"
+        onClick={onToggle}
+      >
+        {First && <First className="text-xl shrink-0" />}
+        {typeof closed === "boolean" &&
+          (closed ? (
+            <ChevronUp className="text-xl shrink-0" />
+          ) : (
+            <ChevronDown className="text-xl shrink-0" />
+          ))}
+        <span className="truncate block">{text}</span>
+      </div>
+
+      {/* RIGHT SECTION */}
+      <div className="flex items-center gap-1 shrink-0">
+        {Second && <Second className="text-xl" />}
+        {Third && <Third className="text-xl" />}
+      </div>
     </div>
   );
 };

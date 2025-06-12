@@ -1,5 +1,5 @@
 export interface ProjectType {
-  closed: string;
+  closed: boolean;
   projectId: string;
   projectName: string;
   userId: string;
@@ -9,8 +9,8 @@ export interface ProjectType {
 }
 
 export interface FolderType {
-  closed: string;
-  folderName: string;
+  closed: boolean;
+  name: string;
   folderId: string;
   projectId: string;
   createdAt: string;

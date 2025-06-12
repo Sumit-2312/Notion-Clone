@@ -2,32 +2,37 @@
 
 import { useEffect, useRef, useState } from "react";
 import SidebarItem from "./sidebar-item";
-import { ArrowDown10, ChevronsLeftRight, Settings } from "lucide-react";
-import { authOptions } from "@/app/api/auth/[...nextauth]/options";
+import {
+  FilePlusIcon,
+  FolderPlusIcon,
+  Settings
+} from "lucide-react";
 import { useSession } from "next-auth/react";
-import { ProjectType } from "@/types/projectsSchema";
+import { FolderType, ProjectType } from "@/types/projectsSchema";
+import { IProject } from "@/types/database";
+import Folders from "./folder-component";
 
-export default function Sidebar({project}:{
-    project: ProjectType
-}) {
+interface projectT extends IProject {
+  folders: FolderType[];
+  closed: boolean;
+}
+
+export default function Sidebar({ project }: { project: projectT | null | undefined }) {
   const [width, setWidth] = useState(30);
-  const [username,setUsername] = useState("Unknown") 
+  const [username, setUsername] = useState("Unknown");
+  const [projectClosed, setProjectClosed] = useState(project?.closed ?? false);
+
   const isResizing = useRef(false);
-//   const {data:session} = useSession(authOptions);
+  //@ts-ignore
+  const { data: session } = useSession();
 
-//   useEffect(()=>{
-//     if(session?.user?.name)  setUsername(session.user.name);
-
-//   },[session]);
+  useEffect(() => {
+    if (session?.user?.username) setUsername(session.user.username);
+  }, [session]);
 
   const handleMouseMove = (e: MouseEvent) => {
     if (!isResizing.current) return;
-
-    const mouseX = e.clientX;
-    const totalWidth = window.innerWidth;
-    let vw = (mouseX / totalWidth) * 100;
-
-    vw = Math.max(20, Math.min(vw, 50)); 
+    const vw = Math.max(20, Math.min((e.clientX / window.innerWidth) * 100, 50));
     setWidth(vw);
   };
 
@@ -35,7 +40,6 @@ export default function Sidebar({project}:{
     isResizing.current = false;
     window.removeEventListener("mousemove", handleMouseMove);
     window.removeEventListener("mouseup", handleMouseUp);
-
     document.body.classList.remove("no-select");
   };
 
@@ -43,7 +47,6 @@ export default function Sidebar({project}:{
     isResizing.current = true;
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
-
     document.body.classList.add("no-select");
   };
 
@@ -57,10 +60,22 @@ export default function Sidebar({project}:{
         className="absolute top-0 right-0 h-full w-[10px] cursor-col-resize bg-zinc-400 hover:bg-blue-700"
       ></div>
 
-    <SidebarItem  text={`Hey ${username}`} />
-    <SidebarItem classname="absolute bottom-2" First={Settings} text="Settings" />
+      <SidebarItem classname="text-3xl font-bold" text={`Hey ${username}`} />
+      <SidebarItem classname="absolute text-xs left-5 bottom-2" First={Settings} text="Settings" />
 
-    <SidebarItem text={project.projectName}/>
+      {project && (
+        <SidebarItem
+          onToggle={() => setProjectClosed((prev) => !prev)}
+          closed={projectClosed}
+          Third={FilePlusIcon}
+          Second={FolderPlusIcon}
+          classname="text-xl"
+          text={project.name}
+        />
+      )}
+
+      { !projectClosed && project && <Folders folders={project?.folders} /> }
+
     </div>
   );
 }

@@ -84,11 +84,11 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }: { session: Session; token: JWT }) {
-      if (token) {
+      if (token && session.user) {
         // Add custom data from token to session
-        session.userId = token.userId as string;
-        session.username = token.username as string;
-        session.email = token.email as string;
+        session.user.userId = token.userId as string;
+        session.user.username = token.username as string;
+        session.user.email = token.email as string;
       }
       return session;
     },

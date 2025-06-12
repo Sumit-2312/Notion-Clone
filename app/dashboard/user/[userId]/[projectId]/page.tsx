@@ -3,15 +3,21 @@
 import { ProjectContext } from "@/providers/PageProvider";
 import { FolderType, ProjectType } from "@/types/projectsSchema";
 import axios from "axios";
-import { useContext, useEffect, useState } from "react";
+import { use, useContext, useEffect, useState } from "react";
 import Sidebar from "./components/sidebar";
+import { IProject } from "@/types/database";
+import Workspace from "./components/Workspace";
 
-export default function Dashboard({params}:{params:{userId:string,projectId:string}}){
+interface projectT extends IProject {
+    folders: FolderType[]
+}
 
-    const {userId,projectId} = params;
+export default function Dashboard({params}:{params:Promise<{userId:string,projectId:string}>}){
+
+    const {projectId} = use(params);
     const [Errors,setErrors] = useState<string|null>(null);
     const context = useContext(ProjectContext);
-    const [project,setProject] = useState<ProjectType|null>();
+    const [project,setProject] = useState<projectT|null>();
     
     if( !context ){
         setErrors("something went wrong");
@@ -24,20 +30,21 @@ export default function Dashboard({params}:{params:{userId:string,projectId:stri
         try{
             const response = await axios.get(`http://localhost:3000/api/project/${projectId}`);
             const AllFolders: FolderType[] = response.data.folders;
-            const project: ProjectType = response.data.project;
+            const response_project: ProjectType = response.data.project;
 
             setProjects((prev: { [projectName: string]: ProjectType }) => {
 
                 const updatedProject: ProjectType = {
-                    ...project,
-                    folders: AllFolders
+                    ...response_project,
+                    folders: AllFolders,
+                    closed:true
                 };
 
                 setProject(updatedProject);
                 
                 return {
                     ...prev,
-                    [project.projectName]: updatedProject
+                    [response_project.projectName]: updatedProject
                 };
             });
         }
@@ -48,7 +55,7 @@ export default function Dashboard({params}:{params:{userId:string,projectId:stri
 
     useEffect(()=>{
         FetchFolders();
-    },[projectId,project]); 
+    },[projectId]); 
 
     if (Errors) {
         return <div className="text-red-500 text-xl">Error: {Errors}</div>;
@@ -57,6 +64,7 @@ export default function Dashboard({params}:{params:{userId:string,projectId:stri
     return (
         <div className="text-white text-4xl border border-amber-300 w-full flex h-screen">
             <Sidebar project={project}/>
+            <Workspace/>
         </div>
     )
 }
